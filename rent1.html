@@ -1,0 +1,133 @@
+<html>
+<?php
+include 'DBController.php';
+$db_handle = new DBController();
+$countryResult = $db_handle->runQuery("SELECT DISTINCT hosue FROM tbl_user ORDER BY owner_name ASC");
+?>
+<head>
+<script type="text/javascript">
+{
+document.getElementById("CHANGETHIS").src="search.html";
+}
+function changepage4()
+{
+document.getElementById("CHANGETHIS").src="contact.html";
+}
+</script>
+</head>
+<body>
+<div style="background-color:teal" >
+<h1 style="font-family:Candara;color:white"> Renting Portal </h1>
+</div>
+<div >
+<ul >
+<li><a href="rent1.html">Home</a></li>
+<li class="last"><a href=contact.html onclick="changepage4();">Contact us</a></li>
+</ul>
+</div>
+<div >
+<label for="area">Choose Area:</label>
+<select name="area">
+  <option value="1200">1200 sq ft</option>
+  <option value="1500">1500 sq ft</option>
+  <option value="2000">2000 sq ft</option>
+</select>
+</br>
+</br>
+<label for="area">Select BHK:</label>
+<select name="bhk">
+  <option value="1200">1 BHK</option>
+  <option value="1500">2 BHK</option>
+  <option value="2000">3 BHK</option>
+</select>
+
+</br>
+</br>
+<button type="submit" form="form1" value="Submit">Submit</button>
+</div>
+<div style="background-color:teal">
+<p style="font-family:Candara;color:white">PHP Project 2020 | Ganesh Gautam | 11607805 | A22 - <a>Renting Portal</a></p>
+</div>
+<?php
+$area = "";
+$bhk = "";
+$query = "";
+$error = "";
+$dbConnection = mysqli_connect( $dbHost, $dbUser, $dbPassword, $dbName );
+if ( mysqli_connect_errno()  {
+die( "Could not connect to the database server:")
+//die () :
+}
+if ($_GET['submitForm']) {
+$inventory = $_GET['area'];
+$author = $_GET['bhk'];
+$error = validate($area,$bhk);
+}
+function validate($area,$bhk) {
+if (($area == 'select') && ($bhk== 'select'))
+ {
+     return "You must select an option!";
+ }
+else if (($area != 'select') && ($bhk != 'select'))
+ {
+     return "You may only select one option!";
+ }
+elseif($_GET['area']== 'all' and $_GET['bhk']== 'select')
+ {
+     $query= "SELECT * FROM tb";
+ }
+elseif($_GET['area']== 'select' and $_GET['bhk']!= 'select')
+ {
+	$query= "SELECT house.Title, owner.Name
+         FROM house, owner,house_detail
+         WHERE house.ID = house_detail.BID
+         and owner.ID = house_detail.AID
+         and Name = '". $_GET['bhk'] . "'";
+ }
+else
+ {
+        $query = "SELECT house." . $_GET['area'] .
+        " FROM house, owner, house_detail
+        WHERE house.ID =  house_detail.BID
+        and owner.ID = house_detail.AID
+        and Name ='" . $_GET['area'] . "'";
+ }
+ }
+	if ($query != Null) {
+	if ( !( $result = mysqli_query($dbConnection, $query) ) )
+	{
+		print( "<p>Could not execute query!</p>" );
+		die( mysqli_error() . "</body></html>" );
+	}
+	end if
+	else 
+	{
+	echo "<p>" . $error . "</p>";
+	}
+	}
+?>
+
+<caption><?php if ($query != Null) { echo "Results of " . $query; } else { echo "<p>No Query Selected</p>"; } ?> </caption>
+<table>
+<?php
+if ($query != Null) {
+while ( $row = mysqli_fetch_row( $result ) )
+{
+print( "<tr>" );
+foreach ( $row as $value )
+print( "<td>$value</td>" );
+print( "</tr>" );
+}
+		}
+else {
+	echo "No results returned.";
+}
+mysqli_free_result($result);
+mysqli_free_result($area);
+mysqli_free_result($bhk);
+mysqli_close( $dbConnection );
+?>
+</table>
+</body>
+</html>
+
